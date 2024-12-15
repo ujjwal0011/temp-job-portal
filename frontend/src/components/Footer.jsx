@@ -1,107 +1,139 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-// import Image from 'next/image';
-import { useSelector } from 'react-redux';
-import {
-  FaSquareXTwitter,
-  FaSquareInstagram,
-  FaYoutube,
-  FaLinkedin,
-} from 'react-icons/fa6';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { Twitter, Instagram, Youtube, Linkedin, MapPin, Mail, Phone } from 'lucide-react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
 
 const Footer = () => {
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated } = useSelector((state) => state.user)
+
+  const quickLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/jobs', label: 'Jobs' },
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact' },
+    ...(isAuthenticated ? [{ href: '/dashboard', label: 'Dashboard' }] : []),
+  ]
+
+  const socialLinks = [
+    { icon: Twitter, label: 'Twitter', href: 'https://twitter.com' },
+    { icon: Instagram, label: 'Instagram', href: 'https://instagram.com' },
+    { icon: Youtube, label: 'YouTube', href: 'https://youtube.com' },
+    { icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com' },
+  ]
 
   return (
-    <footer className="bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
+    <footer className="bg-gray-50 border-t">
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <Card className="bg-transparent border-none shadow-none">
-            <CardContent className="p-0">
-              {/* <Image src="/logo.png" alt="logo" width={150} height={50} /> */}
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="Job Portal Logo" className="w-10 h-10" />
+              <span className="text-2xl font-bold text-gray-900">Job Portal</span>
+            </Link>
+            <p className="text-sm text-gray-600">
+              Connecting talented professionals with exciting career opportunities.
+            </p>
+            <div className="flex space-x-4">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <link.icon className="w-5 h-5" />
+                  <span className="sr-only">{link.label}</span>
+                </a>
+              ))}
+            </div>
+          </div>
 
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="p-0">
-              <CardTitle className="text-lg font-semibold mb-2">Support</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ul className="space-y-2 text-sm">
-                <li>Address: No. 21, MG Road, Near Brigade Road, Bangalore, Karnataka, India - 560001</li>
-                <li>doejohn67711@gmail.com</li>
-                <li>+91 8288665190</li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Quick Links
+            </h3>
+            <ul className="space-y-2">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="text-base text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="p-0">
-              <CardTitle className="text-lg font-semibold mb-2">Quick Links</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/" className="text-blue-600 hover:underline">Home</Link>
-                </li>
-                <li>
-                  <Link to="/jobs" className="text-blue-600 hover:underline">Jobs</Link>
-                </li>
-                {isAuthenticated && (
-                  <li>
-                    <Link to="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
-                  </li>
-                )}
-              </ul>
-            </CardContent>
-          </Card>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Contact Us
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-start space-x-2">
+                <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0 mt-1" />
+                <span>21 MG Road, Near Brigade Road, Bangalore, Karnataka, India - 560001</span>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Mail className="w-5 h-5 text-gray-400" />
+                <a href="mailto:contact@jobportal.com" className="hover:text-gray-900 transition-colors">
+                  contact@jobportal.com
+                </a>
+              </li>
+              <li className="flex items-center space-x-2">
+                <Phone className="w-5 h-5 text-gray-400" />
+                <a href="tel:+918288665190" className="hover:text-gray-900 transition-colors">
+                  +91 8288665190
+                </a>
+              </li>
+            </ul>
+          </div>
 
-          <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="p-0">
-              <CardTitle className="text-lg font-semibold mb-2">Follow Us</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/" className="flex items-center space-x-2 text-blue-600 hover:underline">
-                    <FaSquareXTwitter className="text-xl" />
-                    <span>Twitter (X)</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="flex items-center space-x-2 text-blue-600 hover:underline">
-                    <FaSquareInstagram className="text-xl" />
-                    <span>Instagram</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="flex items-center space-x-2 text-blue-600 hover:underline">
-                    <FaYoutube className="text-xl" />
-                    <span>Youtube</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="flex items-center space-x-2 text-blue-600 hover:underline">
-                    <FaLinkedin className="text-xl" />
-                    <span>LinkedIn</span>
-                  </Link>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Stay Updated
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Subscribe to our newsletter for the latest job opportunities and career insights.
+            </p>
+            <form className="space-y-2">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full"
+              />
+              <Button type="submit" className="w-full">
+                Subscribe
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
       <Separator />
-      <div className="container mx-auto px-4 py-4 text-center text-sm text-gray-600">
-        &copy; Copyright 2024. All Rights Reserved By Ujjwal
+      <div className="container mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center">
+        <p className="text-sm text-gray-600">
+          &copy; {new Date().getFullYear()} Job Portal. All rights reserved.
+        </p>
+        <div className="flex space-x-4 mt-4 sm:mt-0">
+          <Link to="/privacy" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Privacy Policy
+          </Link>
+          <Link to="/terms" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Terms of Service
+          </Link>
+        </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer
+

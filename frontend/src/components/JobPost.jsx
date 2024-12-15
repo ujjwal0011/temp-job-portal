@@ -1,27 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { toast } from "react-toastify";
-import { clearAllJobErrors, postJob, resetJobSlice } from "../store/slices/jobSlice";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+'use client'
+
+import React, { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { toast } from "react-toastify"
+import { clearAllJobErrors, postJob, resetJobSlice } from "../store/slices/jobSlice"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Loader2 } from 'lucide-react'
 
 const JobPost = () => {
-  const [title, setTitle] = useState("");
-  const [jobType, setJobType] = useState("");
-  const [location, setLocation] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [introduction, setIntroduction] = useState("");
-  const [responsibilities, setResponsibilities] = useState("");
-  const [qualifications, setQualifications] = useState("");
-  const [offers, setOffers] = useState("");
-  const [jobNiche, setJobNiche] = useState("");
-  const [salary, setSalary] = useState("");
-  const [hiringMultipleCandidates, setHiringMultipleCandidates] = useState("");
-  const [personalWebsiteTitle, setPersonalWebsiteTitle] = useState("");
-  const [personalWebsiteUrl, setPersonalWebsiteUrl] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    jobType: "",
+    location: "",
+    companyName: "",
+    introduction: "",
+    responsibilities: "",
+    qualifications: "",
+    offers: "",
+    jobNiche: "",
+    salary: "",
+    hiringMultipleCandidates: "",
+    personalWebsiteTitle: "",
+    personalWebsiteUrl: "",
+  })
 
   const nichesArray = [
     "Software Development",
@@ -44,198 +51,232 @@ const JobPost = () => {
     "IT Support and Helpdesk",
     "Systems Administration",
     "IT Consulting",
-  ];
+  ]
 
   const cities = [
-    "Bengaluru",
-    "Hyderabad",
-    "Chennai",
-    "Pune",
-    "Mumbai",
-    "Delhi",
-    "Noida",
-    "Gurgaon",
-    "Kolkata",
-    "Ahmedabad",
-    "Chandigarh",
-    "Jaipur",
-    "Kochi",
-    "Trivandrum",
-    "Indore",
-    "Nagpur",
-    "Vadodara",
-    "Coimbatore",
-    "Mysore",
-    "Visakhapatnam",
-  ];
+    "Bengaluru", "Hyderabad", "Chennai", "Pune", "Mumbai", "Delhi", "Noida", "Gurgaon",
+    "Kolkata", "Ahmedabad", "Chandigarh", "Jaipur", "Kochi", "Trivandrum", "Indore",
+    "Nagpur", "Vadodara", "Coimbatore", "Mysore", "Visakhapatnam",
+  ]
 
-  const { loading, error, message } = useSelector((state) => state.jobs);
-  const dispatch = useDispatch();
+  const { loading, error, message } = useSelector((state) => state.jobs)
+  const dispatch = useDispatch()
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handlePostJob = () => {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("jobType", jobType);
-    formData.append("location", location);
-    formData.append("companyName", companyName);
-    formData.append("introduction", introduction);
-    formData.append("responsibilities", responsibilities);
-    formData.append("qualifications", qualifications);
-    offers && formData.append("offers", offers);
-    formData.append("jobNiche", jobNiche);
-    formData.append("salary", salary);
-    hiringMultipleCandidates &&
-      formData.append("hiringMultipleCandidates", hiringMultipleCandidates);
-    personalWebsiteTitle &&
-      formData.append("personalWebsiteTitle", personalWebsiteTitle);
-    personalWebsiteUrl &&
-      formData.append("personalWebsiteUrl", personalWebsiteUrl);
-
-    dispatch(postJob(formData));
-  };
+    const formDataToSend = new FormData()
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) formDataToSend.append(key, value)
+    })
+    dispatch(postJob(formDataToSend))
+  }
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
-      dispatch(clearAllJobErrors());
+      toast.error(error)
+      dispatch(clearAllJobErrors())
     }
     if (message) {
-      toast.success(message);
-      dispatch(resetJobSlice());
+      toast.success(message)
+      dispatch(resetJobSlice())
     }
-  }, [dispatch, error, message]);
+  }, [dispatch, error, message])
+
+  const isFormValid = () => {
+    const requiredFields = ['title', 'jobType', 'location', 'companyName', 'introduction', 'responsibilities', 'qualifications', 'jobNiche', 'salary']
+    return requiredFields.every(field => formData[field])
+  }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h3 className="text-2xl font-semibold mb-6">Post A Job</h3>
+    <div className="container mx-auto py-8 px-4 md:px-0">
+      <Card className="max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Post A Job</CardTitle>
+          <CardDescription>Fill in the details to post a new job opportunity</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="title">Job Title</Label>
+              <Input id="title" name="title" value={formData.title} onChange={handleInputChange} placeholder="e.g. Senior React Developer" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="jobType">Job Type</Label>
+              <Select value={formData.jobType} onValueChange={(value) => handleSelectChange("jobType", value)}>
+                <SelectTrigger id="jobType">
+                  <SelectValue placeholder="Select Job Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Full-time">Full-time</SelectItem>
+                  <SelectItem value="Internship">Internship</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-      <div className="space-y-4">
-        <Label>Title</Label>
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Job Title" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="location">Location (City)</Label>
+              <Select value={formData.location} onValueChange={(value) => handleSelectChange("location", value)}>
+                <SelectTrigger id="location">
+                  <SelectValue placeholder="Select Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city} value={city}>
+                      {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input id="companyName" name="companyName" value={formData.companyName} onChange={handleInputChange} placeholder="e.g. Tech Innovations Inc." />
+            </div>
+          </div>
 
-        <Label>Job Type</Label>
-        <Select value={jobType} onValueChange={setJobType}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Job Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Full-time">Full-time</SelectItem>
-            <SelectItem value="Internship">Internship</SelectItem>
-          </SelectContent>
-        </Select>
+          <Separator />
 
-        <Label>Location (City)</Label>
-        <Select value={location} onValueChange={setLocation}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Location" />
-          </SelectTrigger>
-          <SelectContent>
-            {cities.map((city, index) => (
-              <SelectItem key={index} value={city}>
-                {city}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <div className="space-y-2">
+            <Label htmlFor="introduction">Company/Job Introduction</Label>
+            <Textarea
+              id="introduction"
+              name="introduction"
+              value={formData.introduction}
+              onChange={handleInputChange}
+              placeholder="Briefly describe the company and the job role"
+              rows={4}
+            />
+          </div>
 
-        <Label>Company Name</Label>
-        <Input
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          placeholder="Company Name"
-        />
+          <div className="space-y-2">
+            <Label htmlFor="responsibilities">Responsibilities</Label>
+            <Textarea
+              id="responsibilities"
+              name="responsibilities"
+              value={formData.responsibilities}
+              onChange={handleInputChange}
+              placeholder="List the key responsibilities for this role"
+              rows={4}
+            />
+          </div>
 
-        <Label>Company/Job Introduction</Label>
-        <Textarea
-          value={introduction}
-          onChange={(e) => setIntroduction(e.target.value)}
-          placeholder="Company / Job Introduction"
-          rows={5}
-        />
+          <div className="space-y-2">
+            <Label htmlFor="qualifications">Qualifications</Label>
+            <Textarea
+              id="qualifications"
+              name="qualifications"
+              value={formData.qualifications}
+              onChange={handleInputChange}
+              placeholder="List the required qualifications for this role"
+              rows={4}
+            />
+          </div>
 
-        <Label>Responsibilities</Label>
-        <Textarea
-          value={responsibilities}
-          onChange={(e) => setResponsibilities(e.target.value)}
-          placeholder="Job Responsibilities"
-          rows={5}
-        />
+          <div className="space-y-2">
+            <Label htmlFor="offers">What We Offer (Optional)</Label>
+            <Textarea
+              id="offers"
+              name="offers"
+              value={formData.offers}
+              onChange={handleInputChange}
+              placeholder="Describe the benefits and perks offered with this position"
+              rows={4}
+            />
+          </div>
 
-        <Label>Qualifications</Label>
-        <Textarea
-          value={qualifications}
-          onChange={(e) => setQualifications(e.target.value)}
-          placeholder="Required Qualifications"
-          rows={5}
-        />
+          <Separator />
 
-        <Label>What We Offer (Optional)</Label>
-        <Textarea
-          value={offers}
-          onChange={(e) => setOffers(e.target.value)}
-          placeholder="What are we offering in return!"
-          rows={5}
-        />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="jobNiche">Job Niche</Label>
+              <Select value={formData.jobNiche} onValueChange={(value) => handleSelectChange("jobNiche", value)}>
+                <SelectTrigger id="jobNiche">
+                  <SelectValue placeholder="Select Job Niche" />
+                </SelectTrigger>
+                <SelectContent>
+                  {nichesArray.map((niche) => (
+                    <SelectItem key={niche} value={niche}>
+                      {niche}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="salary">Salary Range</Label>
+              <Input id="salary" name="salary" value={formData.salary} onChange={handleInputChange} placeholder="e.g. 50,000 - 80,000" />
+            </div>
+          </div>
 
-        <Label>Job Niche</Label>
-        <Select value={jobNiche} onValueChange={setJobNiche}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Job Niche" />
-          </SelectTrigger>
-          <SelectContent>
-            {nichesArray.map((niche, index) => (
-              <SelectItem key={index} value={niche}>
-                {niche}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="hiringMultipleCandidates">Hiring Multiple Candidates?</Label>
+              <Select value={formData.hiringMultipleCandidates} onValueChange={(value) => handleSelectChange("hiringMultipleCandidates", value)}>
+                <SelectTrigger id="hiringMultipleCandidates">
+                  <SelectValue placeholder="Yes or No" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Yes">Yes</SelectItem>
+                  <SelectItem value="No">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-        <Label>Salary</Label>
-        <Input
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
-          placeholder="50000 - 800000"
-        />
+          <Separator />
 
-        <Label>Hiring Multiple Candidates?</Label>
-        <Select value={hiringMultipleCandidates} onValueChange={setHiringMultipleCandidates}>
-          <SelectTrigger>
-            <SelectValue placeholder="Yes or No" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Yes">Yes</SelectItem>
-            <SelectItem value="No">No</SelectItem>
-          </SelectContent>
-        </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="personalWebsiteTitle">Personal Website Name (Optional)</Label>
+              <Input
+                id="personalWebsiteTitle"
+                name="personalWebsiteTitle"
+                value={formData.personalWebsiteTitle}
+                onChange={handleInputChange}
+                placeholder="e.g. Company Blog"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="personalWebsiteUrl">Personal Website Link (Optional)</Label>
+              <Input
+                id="personalWebsiteUrl"
+                name="personalWebsiteUrl"
+                value={formData.personalWebsiteUrl}
+                onChange={handleInputChange}
+                placeholder="https://example.com"
+              />
+            </div>
+          </div>
 
-        <Label>Personal Website Name (Optional)</Label>
-        <Input
-          value={personalWebsiteTitle}
-          onChange={(e) => setPersonalWebsiteTitle(e.target.value)}
-          placeholder="Website Name"
-        />
-
-        <Label>Personal Website Link (Optional)</Label>
-        <Input
-          value={personalWebsiteUrl}
-          onChange={(e) => setPersonalWebsiteUrl(e.target.value)}
-          placeholder="https://example.com"
-        />
-
-        <Button
-          onClick={handlePostJob}
-          disabled={loading}
-          className="w-full mt-4 flex justify-center items-center gap-2"
-        >
-          {loading && (
-            <span className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></span>
-          )}
-          {loading ? "Posting..." : "Post Job"}
-        </Button>
-      </div>
+          <Button
+            onClick={handlePostJob}
+            disabled={loading || !isFormValid()}
+            className="w-full mt-6"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Posting...
+              </>
+            ) : (
+              "Post Job"
+            )}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
-  );
-};
+  )
+}
 
-export default JobPost;
+export default JobPost
+

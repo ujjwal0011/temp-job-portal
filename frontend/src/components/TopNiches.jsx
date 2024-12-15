@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"; // Ensure the correct path for the card component
+import { motion } from "framer-motion";
 
 const TopNiches = () => {
   const services = [
@@ -43,20 +44,34 @@ const TopNiches = () => {
 
   return (
     <section className="py-12 px-6 bg-gray-50">
-      {/* Section Title */}
-      <h3 className="text-center text-3xl font-semibold text-gray-800 mb-10">
+      {/* Animated Section Title */}
+      <motion.h3
+        className="text-center text-3xl font-semibold text-gray-800 mb-10"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
         Top Niches
-      </h3>
+      </motion.h3>
+
+      {/* Grid of Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {services.map((element) => (
-          <Card key={element.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-            <CardContent className="p-6">
-              <CardTitle className="text-xl font-bold text-gray-800">{element.service}</CardTitle>
-              <CardDescription className="text-gray-600 mt-2">
-                {element.description}
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <motion.div
+            key={element.id}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 * element.id }} // Stagger delay
+          >
+            <Card className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col h-full">
+              <CardContent className="flex-1 p-6">
+                <CardTitle className="text-xl font-bold text-gray-800">{element.service}</CardTitle>
+                <CardDescription className="text-gray-600 mt-2">
+                  {element.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
     </section>

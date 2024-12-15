@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import Account from "./pages/Account";
 import Jobs from "./pages/Jobs";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/account" element={<Account />} />
           <Route
             path="/post/application/:jobId"
             element={<PostApplication />}

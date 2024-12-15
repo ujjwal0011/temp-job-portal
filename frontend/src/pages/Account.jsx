@@ -7,15 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { logout, clearAllUserErrors } from "@/store/slices/userSlice";
-import JobPost from "@/components/JobPost";
-import MyJobs from "@/components/MyJobs";
-import Applications from "@/components/Applications";
-import MyApplications from "@/components/MyApplications";
+import { clearAllUserErrors } from "@/store/slices/userSlice";
+import MyProfile from "@/components/MyProfile";
+import UpdateProfile from "@/components/UpdateProfile";
+import UpdatePassword from "@/components/UpdatePassword";
 
-export default function Dashboard() {
+export default function Account() {
   const [show, setShow] = useState(false);
-  const [componentName, setComponentName] = useState("Job Post");
+  const [componentName, setComponentName] = useState("My Profile");
 
   const { loading, isAuthenticated, error, user } = useSelector(
     (state) => state.user
@@ -27,6 +26,8 @@ export default function Dashboard() {
   const [searchParams] = useSearchParams();
 
   const section = searchParams.get("section");
+
+  
 
   useEffect(() => {
     if (error) {
@@ -40,32 +41,26 @@ export default function Dashboard() {
         .map((word) => word[0].toUpperCase() + word.slice(1))
         .join(" ");
       setComponentName(formattedSection);
-    } else {
-      // Default to Job Post or My Applications based on the user's role
-      setComponentName(user?.role === "Employer" ? "Job Post" : "My Applications");
     }
   }, [dispatch, error, loading, isAuthenticated, router, section]);
 
   const renderComponent = () => {
     switch (componentName) {
-      case "Job Post":
-        return <JobPost />;
-      case "My Jobs":
-        return <MyJobs />;
-      case "Applications":
-        return <Applications />;
-      case "My Applications":
-        return <MyApplications />;
+      case "My Profile":
+        return <MyProfile />;
+      case "Update Profile":
+        return <UpdateProfile />;
+      case "Update Password":
+        return <UpdatePassword />;
       default:
-        return <JobPost />;
+        return <MyProfile />;
     }
   };
 
   const menuItems = [
-    { name: "Job Post", role: "Employer", query: "job-post" },
-    { name: "My Jobs", role: "Employer", query: "my-jobs" },
-    { name: "Applications", role: "Employer", query: "applications" },
-    { name: "My Applications", role: "Job Seeker", query: "my-applications" },
+    { name: "My Profile", role: "all", query: "my-profile" },
+    { name: "Update Profile", role: "all", query: "update-profile" },
+    { name: "Update Password", role: "all", query: "update-password" },
   ];
 
   return (
